@@ -43,6 +43,9 @@ kubectl -n demo exec tiefighter -- curl -s -XPUT deathstar.demo.svc.cluster.loca
 
 ```
 kubectl -n demo delete -f https://raw.githubusercontent.com/kkantonop/cilium-demo/refs/heads/main/deathstar-ingress.yaml
+```
+
+```
 kubectl -n demo apply -f https://raw.githubusercontent.com/kkantonop/cilium-demo/refs/heads/main/l7.yaml
 ```
 
