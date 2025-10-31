@@ -1,0 +1,26 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: "alliance-fqdn-policy"
+spec:
+  endpointSelector:
+    matchLabels:
+      org: alliance
+  egress:
+  - toEntities:
+      - host
+    toPorts:
+      - ports:
+          - port: "53"
+            protocol: ANY
+        rules:
+          dns:
+            - matchPattern: "*"
+  - toFQDNs:
+      - matchName: "swapi.dev"
+    toPorts:
+      - ports:
+         - port: "80"
+           protocol: TCP
+         - port: "443"
+           protocol: TCP

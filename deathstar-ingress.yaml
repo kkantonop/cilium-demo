@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: "deathstart-ingress"
+spec:
+  podSelector:
+    matchLabels:
+      org: empire
+      class: deathstar
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          org: empire
+    ports:
+    - protocol: TCP
+      port: 80
