@@ -19,12 +19,12 @@ kubectl -n kube-system port-forward services/hubble-ui 8081:http
 
 xwing requests landing
 ```
-kubectl -n demo exec xwing -- curl -s -XPOST deathstar.demo.svc.cluster.local/v1/request-landing
+kubectl -n demo exec xwing -- curl -s -m 20 -XPOST deathstar.demo.svc.cluster.local/v1/request-landing
 ```
 
 tiefighter requests landing
 ```
-kubectl -n demo exec tiefighter -- curl -s -XPOST deathstar.demo.svc.cluster.local/v1/request-landing
+kubectl -n demo exec tiefighter -- curl -s -m 20 -XPOST deathstar.demo.svc.cluster.local/v1/request-landing
 ```
 
 ## Restrict Access to Deathstar Only to Empire
@@ -58,7 +58,7 @@ kubectl -n demo apply -f https://raw.githubusercontent.com/kkantonop/cilium-demo
 ## Alliance Wants to Get Tatoine Coords to Escape
 
 ```
-kubectl -n demo exec xwing -- curl -vs https://swapi.dev/api/planets/1
+kubectl -n demo exec xwing -- curl -vs -m 20 https://swapi.dev/api/planets/1
 ```
 
 ## Alliance Last Hope?
