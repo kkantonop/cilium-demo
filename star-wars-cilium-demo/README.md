@@ -4,87 +4,87 @@ based on [Getting Started with the Star Wars Demo](https://docs.cilium.io/en/sta
 
 ## Deploy the apps
 
-```
+```sh
 kubectl create namespace demo
-kubectl -n demo apply -f https://raw.githubusercontent.com/kkantonop/cilium-demo/refs/heads/main/apps.yaml
+kubectl -n demo apply -f https://raw.githubusercontent.com/kkantonop/cilium-demo/refs/heads/main/star-wars-cilium-demo/apps.yaml
 ```
 
 ## Hubble UI
 
-```
+```sh
 kubectl -n kube-system port-forward services/hubble-ui 8081:http
 ```
 
 ## Request Landing
 
 xwing requests landing
-```
+```sh
 kubectl -n demo exec xwing -- curl -s -m 20 -XPOST deathstar.demo.svc.cluster.local/v1/request-landing
 ```
 
 tiefighter requests landing
-```
+```sh
 kubectl -n demo exec tiefighter -- curl -s -m 20 -XPOST deathstar.demo.svc.cluster.local/v1/request-landing
 ```
 
 ## Restrict Access to Deathstar Only to Empire
 
-```
-kubectl -n demo apply -f https://raw.githubusercontent.com/kkantonop/cilium-demo/refs/heads/main/deathstar-ingress.yaml
+```sh
+kubectl -n demo apply -f https://raw.githubusercontent.com/kkantonop/cilium-demo/refs/heads/main/star-wars-cilium-demo/deathstar-ingress.yaml
 ```
 
 ## Sabotage Attempt
 
-```
+```sh
 kubectl -n demo exec tiefighter -- curl -s -XPUT deathstar.demo.svc.cluster.local/v1/exhaust-port
 ```
 
 ## Prevent Sabotage
 
-```
-kubectl -n demo delete -f https://raw.githubusercontent.com/kkantonop/cilium-demo/refs/heads/main/deathstar-ingress.yaml
+```sh
+kubectl -n demo delete -f https://raw.githubusercontent.com/kkantonop/cilium-demo/refs/heads/main/star-wars-cilium-demo/deathstar-ingress.yaml
 ```
 
-```
-kubectl -n demo apply -f https://raw.githubusercontent.com/kkantonop/cilium-demo/refs/heads/main/l7.yaml
+```sh
+kubectl -n demo apply -f https://raw.githubusercontent.com/kkantonop/cilium-demo/refs/heads/main/star-wars-cilium-demo/l7.yaml
 ```
 
 ## Block Alliance Comms
 
-```
-kubectl -n demo apply -f https://raw.githubusercontent.com/kkantonop/cilium-demo/refs/heads/main/alliance-deny-egress.yaml
+```sh
+kubectl -n demo apply -f https://raw.githubusercontent.com/kkantonop/cilium-demo/refs/heads/main/star-wars-cilium-demo/alliance-deny-egress.yaml
 ```
 
 ## Alliance Wants to Get Tatoine Coords to Escape
 
-```
+```sh
 kubectl -n demo exec xwing -- curl -vs -m 20 https://swapi.dev/api/planets/1
 ```
 
 ## Alliance Last Hope?
 
-```
-kubectl -n demo apply -f https://raw.githubusercontent.com/kkantonop/cilium-demo/refs/heads/main/alliance-fqdn.yaml
+```sh
+kubectl -n demo apply -f https://raw.githubusercontent.com/kkantonop/cilium-demo/refs/heads/main/star-wars-cilium-demo/alliance-fqdn.yaml
 ```
 
 
 ---
 Get the cilium pod running on the same node
-```
+```sh
 kubectl -n kube-system get pods -l k8s-app=cilium -o wide
 ```
 
 Get endpoint list
-```
+```sh
 kubectl -n kube-system exec <cilium-pod-name> -- cilium-dbg endpoint list
 ```
 
 Monitor for "drop" verdict
-```
+```sh
 kubectl -n kube-system exec <cilium-pod-name> -- cilium-dbg monitor --type=drop
 ```
 
 Monitor for "l7" verdict
-```
+```sh
 kubectl -n kube-system exec <cilium-pod-name> -- cilium-dbg monitor --type=l7
 ```
