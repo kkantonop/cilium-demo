@@ -1,0 +1,24 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  labels:
+    app.kubernetes.io/instance: clusterwide-netpol
+    app.kubernetes.io/name: clusterwide-netpol
+  name: allow-cluster-dns
+spec:
+  egress:
+    - toEntities:
+        - host
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+  endpointSelector:
+    matchLabels:
+      cluster-dns-network-policy: "true"

@@ -1,0 +1,24 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ada-egress
+  namespace: baker-st
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: ada
+  description: Ada may access Sherlock, Watson and Moriarty on HTTP; v1 cannot resolve
+    names until the DNS label is added.
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        app.kubernetes.io/name: sherlock
+    - matchLabels:
+        app.kubernetes.io/name: watson
+    - matchLabels:
+        app.kubernetes.io/name: moriarty
+    toPorts:
+    - ports:
+      - port: '8080'
+        protocol: TCP

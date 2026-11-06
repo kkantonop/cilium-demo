@@ -1,0 +1,25 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: moriarty-ingress
+  namespace: baker-st
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: moriarty
+  description:
+    Moriarty accepts GET requests from Ada, with L7 HTTP visibility for
+    the final reveal.
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: ada
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+          rules:
+            http:
+              - method: GET
+                path: /.*

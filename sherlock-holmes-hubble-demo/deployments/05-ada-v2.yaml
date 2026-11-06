@@ -1,0 +1,77 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ada
+  namespace: baker-st
+  labels:
+    app.kubernetes.io/name: ada
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ada
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ada
+        cluster-dns-network-policy: 'true'
+    spec:
+      containers:
+      - name: ada
+        image: python:3.14-alpine
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -ec
+        args:
+        - |
+          mkdir -p /tmp/www
+          printf '%s\n' 'Miss Ada Moran - Nothing suspicious here' > /tmp/www/index.html
+          python3 -u -m http.server 8080 --bind 0.0.0.0 --directory /tmp/www &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT TERM INT
+          count=0
+          while true; do
+            if [ "$((count % 2))" -eq 0 ]; then
+              secret=scotland-yard
+            else
+              secret=strand-magazine
+            fi
+            echo "Ada: secretly contacting Moriarty about $secret"
+            if ! wget -q -T 3 -O /dev/null "http://moriarty.baker-st.svc.cluster.local:8080/intel/$secret"; then
+              echo 'Ada: the secret message could not be delivered'
+            fi
+            count=$((count + 1))
+            sleep 5
+          done
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ada
+  namespace: baker-st
+  labels:
+    app.kubernetes.io/name: ada
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: ada
+  ports:
+  - name: http
+    port: 8080
+    targetPort: http
+    protocol: TCP

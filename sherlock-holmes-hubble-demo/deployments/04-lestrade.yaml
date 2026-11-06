@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lestrade
+  namespace: baker-st
+  labels:
+    app.kubernetes.io/name: lestrade
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: lestrade
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: lestrade
+        cluster-dns-network-policy: 'true'
+    spec:
+      containers:
+      - name: lestrade
+        image: python:3.14-alpine
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -ec
+        args:
+        - |
+          mkdir -p /tmp/www
+          printf '%s\n' 'Inspector Lestrade - Scotland Yard' > /tmp/www/index.html
+          exec python3 -u -m http.server 8080 --bind 0.0.0.0 --directory /tmp/www
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lestrade
+  namespace: baker-st
+  labels:
+    app.kubernetes.io/name: lestrade
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: lestrade
+  ports:
+  - name: http
+    port: 8080
+    targetPort: http
+    protocol: TCP

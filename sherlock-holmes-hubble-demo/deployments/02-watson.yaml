@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: watson
+  namespace: baker-st
+  labels:
+    app.kubernetes.io/name: watson
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: watson
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: watson
+        cluster-dns-network-policy: 'true'
+    spec:
+      containers:
+      - name: watson
+        image: python:3.14-alpine
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -ec
+        args:
+        - |
+          mkdir -p /tmp/www
+          printf '%s\n' 'Dr Watson - Ready to assist Holmes' > /tmp/www/index.html
+          exec python3 -u -m http.server 8080 --bind 0.0.0.0 --directory /tmp/www
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: watson
+  namespace: baker-st
+  labels:
+    app.kubernetes.io/name: watson
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: watson
+  ports:
+  - name: http
+    port: 8080
+    targetPort: http
+    protocol: TCP

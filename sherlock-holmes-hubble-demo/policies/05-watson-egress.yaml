@@ -1,0 +1,19 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: watson-egress
+  namespace: baker-st
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: watson
+  description: Watson may access Sherlock on HTTP.
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        app.kubernetes.io/name: sherlock
+    toPorts:
+    - ports:
+      - port: '8080'
+        protocol: TCP

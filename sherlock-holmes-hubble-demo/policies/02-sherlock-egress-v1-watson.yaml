@@ -1,0 +1,19 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: sherlock-egress
+  namespace: baker-st
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: sherlock
+  description: 'Act I: Sherlock can reach Watson, but not Lestrade or The Strand.'
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        app.kubernetes.io/name: watson
+    toPorts:
+    - ports:
+      - port: '8080'
+        protocol: TCP
