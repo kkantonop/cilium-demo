@@ -114,7 +114,6 @@ Observe
 hubble observe \
   --from-label 'k8s:app.kubernetes.io/name=sherlock' \
   --to-label 'k8s:app.kubernetes.io/name=lestrade' \
-  --verdict DROPPED \
   --follow
 ```
 
